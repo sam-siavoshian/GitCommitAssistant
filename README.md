@@ -130,7 +130,7 @@ To allow GitCommitAssistant to interact with your GitHub account, you need to ge
 
 **Q2: Can I customize commit messages for each repository?**
 
-**A2:** Yes. During setup, you can choose to use default professional commit messages or provide your own tailored messages for each repository.
+**A2:** Yes. You can edit the commit_messages.txt file and add the custom messages that you need!
 
 **Q3: What permissions does GitCommitAssistant require?**
 
