@@ -1,228 +1,193 @@
 # GitCommitAssistant 🚀
 
-
-## Description 📝
-
-**GitCommitAssistant** is an open-source tool designed to help developers manage their GitHub repositories by automating commit messages. Whether you're looking to maintain a consistent commit history for personal projects, manage multiple repositories efficiently, or ensure regular updates, GitCommitAssistant provides a streamlined solution.
-
-> **⚠️ Disclaimer:** This tool is intended for legitimate use cases such as managing multiple repositories, maintaining project consistency, or educational purposes. Misuse of this tool to fabricate commit histories or deceive others is strongly discouraged and violates GitHub's [Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service).
-
-## Table of Contents 📚
-
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Getting Started with Personal Access Tokens](#getting-started-with-personal-access-tokens)
-- [FAQ](#faq)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+**GitCommitAssistant** is a powerful Python tool designed to help developers automate their GitHub repository activity and unlock GitHub achievements. Whether you want to fill your contribution graph, increase your pull request count, earn discussion achievements, or unlock the coveted "Pair Extraordinaire" achievement, this tool has you covered!
 
 ## Features 🌟
 
 - **Automated Commit Generation:** Create meaningful and consistent commit messages across multiple repositories.
+- **Historical Commit Generation:** Generate commits that simulate pull request activity with proper backdating for GitHub activity charts.
+- **GitHub Discussions with Accepted Answers:** Create discussions with accepted answers to unlock the "Galaxy Brain" achievement.
+- **Coauthored Pull Requests:** Create pull requests with properly formatted coauthored commits to unlock the "Pair Extraordinaire" achievement.
+- **Achievement Troubleshooting:** Built-in fixes for common GitHub achievement issues.
 - **Customizable Commit Frequency:** Choose how often commits are made, ranging from daily to random intervals.
 - **Personalized Commit Messages:** Use default professional messages or provide your own for each repository.
 - **Repository Management:** Automatically create new repositories if you don't have any.
 - **User-Friendly Interface:** Interactive prompts guide you through the setup and usage process.
-- **Loading Indicators:** Visual feedback during processing to enhance user experience.
+- **Lightweight and Fast:** Minimal dependencies and efficient processing with parallel operations.
 
-## Installation 🛠️
+## Recent Updates 🆕
 
-1. **Clone the Repository:**
+### v2.1 - Achievement Fix Update
+- **🔧 Fixed Coauthor Format:** Coauthored commits now include proper `Co-authored-by:` lines that GitHub recognizes
+- **🧠 Enhanced Galaxy Brain:** Improved discussion creation with Q&A category detection
+- **📊 Achievement Troubleshooting:** Added comprehensive troubleshooting guide for missing achievements
+- **⚡ Performance Improvements:** Optimized parallel processing for faster execution
 
+## GitHub Achievements Supported 🏆
+
+| Achievement | Description | Status |
+|-------------|-------------|---------|
+| **Pull Shark** | Merged pull requests | ✅ Supported |
+| **Galaxy Brain** | Accepted discussion answers | ✅ Supported |  
+| **Pair Extraordinaire** | Coauthored commits on merged PRs | ✅ Fixed & Supported |
+| **YOLO** | Merged PR without review | ✅ Automatic |
+| **Quickdraw** | Quick issue/PR closure | ✅ Manual |
+
+## Installation 📦
+
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/GitCommitAssistant.git
-   ```
-
-2. **Navigate to the Project Directory:**
-
-   ```bash
+   git clone https://github.com/sam-siavoshian/GitCommitAssistant.git
    cd GitCommitAssistant
    ```
 
-3. **Install Required Dependencies:**
-
-   Ensure you have Python 3.6 or higher installed. Then, install the necessary Python packages:
-
+2. **Install dependencies:**
    ```bash
-   pip install -r requirements.txt
+   pip install requests
    ```
 
-## Usage 💻
+3. **Set up your GitHub Personal Access Token:**
+   - Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Generate a new token with `repo`, `workflow`, and `discussions:write` scopes
+   - Keep this token secure!
 
-1. **Run the Script:**
+## Usage 🎯
 
+1. **Run the script:**
    ```bash
-   python GitCommitAssistant.py
+   python3 GitCommitAssistant.py
    ```
 
-2. **Follow the Prompts:**
+2. **Choose Your Operation:**
+   - Select whether you want to generate commits, create pull requests, create discussions with accepted answers, or create coauthored pull requests.
 
-   - **Repository Setup:**
-     - Indicate whether you have existing repositories.
-     - If not, the tool will assist in creating new ones.
+3. **Repository Setup:**
+   - Choose to use existing repositories or create new ones.
+   - Provide repository names and GitHub URLs.
+
+4. **For Commit Generation:**
+   - **Commit Frequency:**
+     - Choose how often you want commits to be made (daily, every few days, weekly, or random).
    - **Date Range:**
      - Specify the start and end dates for commit generation.
-   - **Commit Frequency:**
-     - Define the minimum and maximum number of commits per day.
    - **Commit Messages:**
-     - Choose to use default messages or provide custom ones for each repository.
+     - Use default messages or provide custom ones for each repository.
 
-3. **Monitor the Process:**
+5. **For Pull Request Creation:**
+   - **Repository Setup:**
+     - Similar to commit generation, set up your repositories.
+   - **Pull Request Count:**
+     - Specify how many pull requests to create for each repository.
+   - **Date Range:**
+     - Specify the start and end dates for pull request creation (allows backdating).
+   - **Authentication:**
+     - Provide your GitHub Personal Access Token for API access.
 
-   A green spinning indicator will display while the tool processes commits. Once completed, you'll receive a confirmation message.
+6. **For Discussion Creation:**
+   - **Repository Setup:**
+     - Set up your repositories (same as other options).
+   - **Discussion Count:**
+     - Specify how many discussions to create for each repository.
+   - **Authentication:**
+     - Provide your GitHub Personal Access Token for API access.
+   - **Prerequisites:**
+     - GitHub Discussions must be enabled on your repositories.
+     - Go to repository Settings → Features → Check "Discussions"
+     - Ensure Q&A category is available (supports marking answers)
 
-## Getting Started with Personal Access Tokens 🔑
+7. **For Coauthored Pull Request Creation:**
+   - **Repository Setup:**
+     - Set up your repositories (same as other options).
+   - **Pull Request Count:**
+     - Specify how many coauthored pull requests to create for each repository.
+   - **Date Range:**
+     - Choose the date range for pull request creation (supports historical dates).
+   - **Coauthor Information:**
+     - Add 1-5 coauthors with names and email addresses.
+     - Can use fictional collaborators for achievement purposes.
+   - **Authentication:**
+     - Provide your GitHub Personal Access Token for API access.
 
-To allow GitCommitAssistant to interact with your GitHub account, you need to generate a Personal Access Token (PAT). Follow these steps:
+## Achievement Troubleshooting 🔧
 
-1. **Sign In to GitHub:**
-   - Visit [GitHub](https://github.com/) and log in to your account.
+### If Your Achievements Aren't Showing Up:
 
-2. **Navigate to Settings:**
-   - Click on your profile picture in the top-right corner.
-   - Select **"Settings"** from the dropdown menu.
+1. **Check Profile Settings (Most Common Issue):**
+   - Go to: https://github.com/settings/profile
+   - Scroll to "Achievements" section
+   - Ensure "Show Achievements on my profile" is **CHECKED** ✅
 
-3. **Access Developer Settings:**
-   - In the left sidebar, click on **"Developer settings"**.
+2. **Wait for Processing:**
+   - GitHub achievements can take **24-48 hours** to appear
+   - Be patient after meeting requirements
 
-4. **Go to Personal Access Tokens:**
-   - Click on **"Personal access tokens"**.
-   - Select **"Tokens (classic)"** if prompted.
+3. **Verify Requirements:**
+   - **Galaxy Brain:** Need 2+ accepted discussion answers
+   - **Pair Extraordinaire:** Need 1+ coauthored commit on merged PR
+   - **Pull Shark:** Need 2+ merged pull requests
 
-5. **Generate a New Token:**
-   - Click the **"Generate new token"** button.
-   - Enter your GitHub password if prompted.
+4. **Check Repository Visibility:**
+   - Achievements typically only count for **public repositories**
+   - Ensure your repositories are public
 
-6. **Configure Token Settings:**
-   - **Note:** GitHub recommends using fine-grained tokens for enhanced security.
-   - **For Classic Tokens:**
-     - **Note:** Classic tokens are being phased out in favor of fine-grained tokens.
+5. **Verify Coauthor Format:**
+   - Commit messages must include: `Co-authored-by: Name <email@example.com>`
+   - This tool now automatically formats this correctly
 
-7. **Set a Note:**
-   - Provide a descriptive name (e.g., "GitCommitAssistant Automation").
+## Example Output 📸
 
-8. **Set Expiration:**
-   - Choose an expiration date for security purposes.
+```
+Welcome to GitCommitAssistant!
+What would you like to do?
+1. Generate commits
+2. Create actual pull requests (will increase PR count in activity chart)
+3. Create discussions with accepted answers (for Galaxy Brain achievement)
+4. Create coauthored pull requests (for Pair Extraordinaire achievement)
 
-9. **Select Scopes:**
-   - **`repo`**: Full control of private repositories.
-   - **`admin:repo_hook`**: Manage repository hooks.
-   - **`user`**: Read and write access to profile information.
+🤝 Creating coauthored pull requests for Pair Extraordinaire achievement
+✅ This creates real GitHub PRs with properly formatted coauthored commits
+👥 Added coauthors: John Doe <john@example.com>, Jane Smith <jane@example.com>
+📝 Pull request #5 created successfully with 3 coauthored commits
+🎉 Pull request #5 merged successfully - achievement progress updated!
+```
 
-10. **Generate the Token:**
-    - Click **"Generate token"** at the bottom.
+## Requirements 📋
 
-11. **Copy the Token:**
-    - **Important:** Copy and store your token securely. You won't be able to view it again.
+- **Python 3.6+**
+- **Git** (installed and configured)
+- **GitHub Personal Access Token** (for API operations)
+- **Internet connection**
+- **Public GitHub repositories** (for achievements to count)
 
-12. **Use the Token in GitCommitAssistant:**
-    - When prompted by the tool, paste your PAT.
+## Security 🔒
 
-> **🔒 Security Tip:** Store your PAT securely and avoid sharing it. If compromised, revoke it immediately from your GitHub settings.
-
-## FAQ ❓
-
-**Q1: Is it ethical to use GitCommitAssistant to fake commits?**
-
-**A1:** No. GitCommitAssistant is intended for legitimate purposes such as managing multiple repositories, maintaining project consistency, or educational use. Fabricating commit histories to deceive others violates ethical guidelines and GitHub's [Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service).
-
-**Q2: Can I customize commit messages for each repository?**
-
-**A2:** Yes. You can edit the commit_messages.txt file and add the custom messages that you need!
-
-**Q3: What permissions does GitCommitAssistant require?**
-
-**A3:** The tool requires a Personal Access Token with specific scopes, primarily `repo`, `admin:repo_hook`, and `user`, to manage repositories and commit changes.
-
-**Q4: How can I contribute to GitCommitAssistant?**
-
-**A4:** See the [Contributing](#contributing) section below for guidelines.
-
-**Q5: What should I do if I encounter an error during usage?**
-
-**A5:** Ensure you have the correct permissions set for your Personal Access Token and that your repositories are accessible. If issues persist, feel free to open an issue on the repository.
+- Your GitHub Personal Access Token is used only for API calls and is not stored.
+- All operations are performed on your own repositories.
+- The tool follows GitHub's API rate limits and best practices.
+- Coauthor emails can be fictional for achievement purposes.
 
 ## Contributing 🤝
 
-Contributions are welcome! To ensure a smooth process, please follow these guidelines:
-
-1. **Fork the Repository:**
-
-   Click the **"Fork"** button at the top-right corner of the repository page.
-
-2. **Clone Your Fork:**
-
-   ```bash
-   git clone https://github.com/yourusername/GitCommitAssistant.git
-   ```
-
-3. **Create a New Branch:**
-
-   ```bash
-   git checkout -b feature/YourFeatureName
-   ```
-
-4. **Make Your Changes:**
-
-   Implement your feature or bug fix.
-
-5. **Commit Your Changes:**
-
-   ```bash
-   git commit -m "Add Your Feature Description"
-   ```
-
-6. **Push to Your Fork:**
-
-   ```bash
-   git push origin feature/YourFeatureName
-   ```
-
-7. **Create a Pull Request:**
-
-   Navigate to the original repository and click **"Compare & pull request"**.
-
-8. **Describe Your Changes:**
-
-   Provide a clear description of what you've done and why.
-
-9. **Wait for Review:**
-
-   Maintainers will review your pull request and provide feedback or merge it.
-
-### Code of Conduct 🛡️
-
-Please adhere to the [Code of Conduct](CODE_OF_CONDUCT.md) when contributing to this project.
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License 📄
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-> **MIT License**
->
-> Permission is hereby granted, free of charge, to any person obtaining a copy
-> of this software and associated documentation files (the "Software"), to deal
-> in the Software without restriction, including without limitation the rights
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-> copies of the Software, and to permit persons to whom the Software is
-> furnished to do so, subject to the following conditions:
->
-> The above copyright notice and this permission notice shall be included in all
-> copies or substantial portions of the Software.
->
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-> SOFTWARE.
+## Disclaimer ⚠️
 
-## Contact 📫
+This tool is designed to help developers showcase their work and earn legitimate GitHub achievements. Please use it responsibly and in accordance with GitHub's Terms of Service. The achievements earned reflect the automated activity generated by this tool.
 
-For any questions or support, please open an issue on the [GitHub repository](https://github.com/yourusername/GitCommitAssistant) or contact [samsiavoshian2009@gmail.com](mailto:samsiavoshian2009@gmail.com).
+## Support 💬
+
+If you encounter any issues or have questions:
+1. Check the troubleshooting section above
+2. Ensure your GitHub Personal Access Token has the correct permissions
+3. Verify that your repositories have the necessary features enabled (Discussions, etc.)
+4. Wait 24-48 hours for achievements to appear after meeting requirements
 
 ---
-**GitCommitAssistant** is maintained by Saam Siavoshian ([GitHub](https://github.com/sam-siavoshian)). Thank you for using this tool responsibly! 😊
+
+**Happy Coding!** 🎉
+
+*Made with ❤️ for the GitHub community*
