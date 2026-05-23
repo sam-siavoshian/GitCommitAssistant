@@ -1,79 +1,147 @@
-# GitCommitAssistant
+# gca - GitCommitAssistant
 
-Farms GitHub achievements via backdated commits, coauthored PRs, and seeded discussions on repos you own.
+A Python CLI for automating GitHub activity: backdated commits, real pull requests, Q&A discussions, coauthored PRs, and Quickdraw issues. Honest about what each GitHub achievement actually requires in 2026, including the ones GitHub has frozen.
 
-For your own GitHub account, on repos you control. Uses a Personal Access Token you provide. No mass-account creation, no impersonation, no commits attributed to other users.
+This is the v2 rewrite. The old `GitCommitAssistant.py` interactive script has been replaced by a proper Python package with subcommands, real tests, and no hardcoded `main` branch.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python 3.6+](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
-## What it does
+## What changed in v2
 
-- **Commits**. Generates N commits per day across the repos you point it at, on any date you pick (today, last week, a year ago). Spoofs `GIT_AUTHOR_DATE` and `GIT_COMMITTER_DATE` so the contribution graph reflects the chosen dates.
-- **Repos**. Auto-creates private repos via `POST /user/repos` if you don't have enough to commit to.
-- **Pull requests**. Opens PRs and self-merges them via `POST /repos/{user}/{repo}/pulls` + `PUT /merge`. Drives Pull Shark + YOLO.
-- **Coauthored PRs**. Multi-line commit messages with `Co-authored-by: Name <email>` footers. Unlocks Pair Extraordinaire.
-- **Discussions**. Creates Discussions via GraphQL, posts a comment, marks the comment as the accepted answer via `markDiscussionCommentAsAnswer`. Unlocks Galaxy Brain.
-- **Interactive**. Prompts walk you through PAT entry, repo selection, message pool, date range, and feature picks.
+- Single 1850-line script split into a clean package (`gca commits`, `gca prs`, `gca discussions`, `gca coauthored`, `gca quickdraw`, `gca doctor`, `gca init`).
+- Default branch is detected per repo, not hardcoded to `main`.
+- Commit dates use the git internal `<unix-ts> +HHMM` format, the only fully unambiguous one.
+- Coauthored commits validate that the coauthor email is not your own primary verified email (a hard requirement when Pair Extraordinaire still awarded).
+- Galaxy Brain flow prefers the `q-a` slug category and falls back cleanly when none exists.
+- GitHub client honors `X-RateLimit-Reset` on 429, retries 5xx with backoff, never retries hard 4xx.
+- Token resolved from `--token` > `GCA_GITHUB_TOKEN` env > `.env` > OS keychain > prompt. Never written to disk by default.
+- 57 unit tests + 1 gated live smoke. No fake progress, no fake stats.
 
 ## Install
 
-```bash
-git clone https://github.com/sam-siavoshian/GitCommitAssistant.git
-cd GitCommitAssistant
-pip install -r requirements.txt
-```
-
-Requires Python 3.6+ and `git` on `PATH`. One dependency: `requests`.
-
-## Run
+Requires Python 3.10 or newer and `git` on PATH.
 
 ```bash
-python GitCommitAssistant.py
+# from a clone
+pip install -e .
+
+# or once published
+pipx install gca
 ```
 
-The script prompts for:
+## Quickstart
 
-- **GitHub Personal Access Token** (classic, with `repo` + `write:discussion` scopes, or fine-grained equivalents)
-- **Repo URLs** (or it pulls from `repo_names.txt` and auto-creates)
-- **Commit message source** (defaults to `commit_messages.txt`)
-- **Date range + commit frequency**
-- **Which features to run** (commits / PRs / coauthored / discussions / all)
+```bash
+# one-time: save your PAT in the OS keychain
+gca init
 
-## Achievements covered
+# verify everything is wired
+gca doctor
 
-| Achievement | Mechanism |
+# 30 days of backdated commits, 2-5 commits on each weekday
+gca commits \
+  --repo sam-siavoshian/playground \
+  --start 2025-04-01 --end 2025-04-30 \
+  --strategy weekdays --min 2 --max 5
+
+# 5 real merged PRs spread across April
+gca prs --repo sam-siavoshian/playground -n 5 --start 2025-04-01 --end 2025-04-30
+
+# open + close 3 issues fast (Quickdraw)
+gca quickdraw --repo sam-siavoshian/playground -n 3
+
+# Q&A discussion with self-marked accepted answer (Galaxy Brain best-effort)
+gca discussions --repo sam-siavoshian/playground -n 1
+
+# coauthored PR (mechanics correct; Pair Extraordinaire badge frozen)
+gca coauthored --repo sam-siavoshian/playground -n 1 \
+  --start 2025-04-01 --end 2025-04-30 \
+  -c "Ada Lovelace <ada@example.org>"
+
+# bulk-create empty repos
+gca create-repos demo-1 demo-2 demo-3 --private
+```
+
+Every command accepts `--dry-run` to print what would happen without touching GitHub, and `--json` for machine-readable output.
+
+## Subcommand reference
+
+| Command | What it does |
 |---|---|
-| **Pull Shark** | PR created via REST API, self-merged via `PUT /merge` |
-| **YOLO** | Self-merged PR without review |
-| **Pair Extraordinaire** | `Co-authored-by: Name <email>` commit footers (multi-line) |
-| **Galaxy Brain** | Discussion + comment + `markDiscussionCommentAsAnswer` GraphQL mutation |
-| **Quickdraw** | Manual. Open and close an issue/PR within ~5 min yourself. |
+| `gca init` | Wizard: verifies your PAT and offers to save it to the OS keychain. |
+| `gca doctor` | Checks token, scopes, git on PATH, and GitHub reachability. |
+| `gca commits` | Walks a date range and drops `N` backdated commits per active day on the default branch. |
+| `gca prs` | Creates `--count` real branches per repo with backdated commits, opens PRs, merges them (`--merge-method squash\|merge\|rebase`). |
+| `gca discussions` | Creates `--count` Q&A discussions per repo and self-marks an accepted answer. |
+| `gca coauthored` | Like `prs` but with `Co-authored-by:` trailers on every commit. Validates the coauthor is not you. |
+| `gca quickdraw` | Opens then closes `--count` issues, with `--pause` seconds between (kept under 5 minutes). |
+| `gca create-repos` | Bulk-create empty private/public repos. |
 
-## Files
+## GitHub achievements: what actually works in 2026
 
-| Path | Purpose |
+| Badge | Status | What this tool does | What you also need |
+|---|---|---|---|
+| **Pull Shark** | Active | Opens real backdated PRs and merges them (`gca prs`). | A repo you own and write to. |
+| **Galaxy Brain** | Active but changed in 2024 | Creates Q&A discussions and marks your own comment as the accepted answer (`gca discussions`). | GitHub now factors in upvotes from other users. Self-marking alone may not award the badge. |
+| **Pair Extraordinaire** | **Frozen by GitHub in Mar 2024** | Emits commits with correct `Co-authored-by:` trailers (`gca coauthored`). | The badge no longer awards to new earners. Existing badges remain. The trailers are still useful for attribution. |
+| **YOLO** | Active | Side effect of `gca prs` since the PRs merge without a review. | Repo not protected by required reviews. |
+| **Quickdraw** | Active | Opens then closes an issue within 5 minutes (`gca quickdraw`). | First close must be inside the 5-minute window. |
+| **Starstruck** | Active | Not automated. | Real stars from real accounts. Buying stars is a ToS violation. |
+| **Public Sponsor** | Active | Not automated. | Sponsor someone publicly via GitHub Sponsors. |
+| **Heart On Your Sleeve** | Active | Not automated. | Add a reaction to any GitHub entity. |
+
+Achievements only count for activity on **public** repositories. Set `--public` on `gca create-repos` if you are starting fresh.
+
+## Tokens and scopes
+
+Generate a classic PAT at <https://github.com/settings/tokens> or a fine-grained PAT under <https://github.com/settings/personal-access-tokens>.
+
+| Scope | Needed for |
 |---|---|
-| `GitCommitAssistant.py` | The whole script. 1850 lines, single-file by design. |
-| `commit_messages.txt` | Pool of commit subjects to sample. Edit to fit your project vocabulary. |
-| `repo_names.txt` | Names used when auto-creating repos. Edit before running. |
-| `requirements.txt` | `requests` only. |
+| `repo` | Everything except discussions. |
+| `write:discussion` | `gca discussions`. |
+| `delete_repo` | Only the live smoke test, which deletes its own throwaway repo at the end. |
 
-## Token scopes
+Resolution order at runtime:
 
-Classic PAT:
+1. `--token` flag.
+2. `GCA_GITHUB_TOKEN` environment variable.
+3. `.env` file in the current directory (see `.env.example`).
+4. OS keychain entry (`service=gca`, `username=github`). Opt-in via `gca init`.
+5. Interactive prompt.
 
-- `repo`. Create repos, push, open + merge PRs.
-- `write:discussion`. Create discussions, mark answers.
+Tokens are sent only to GitHub over HTTPS. They are not written to logs or to disk unless you opt into the keychain.
 
-Generate at [github.com/settings/tokens](https://github.com/settings/tokens). Don't commit the token. The script reads it from stdin and keeps it in memory only.
+## Testing
 
-## Notes
+```bash
+pip install -e ".[dev]"
+pytest                    # 57 unit tests, ~2 seconds
+GCA_LIVE=1 GCA_GITHUB_TOKEN=ghp_... pytest -m live    # 1 live smoke test
+```
 
-- Coauthor emails in `Co-authored-by:` footers are plaintext. They don't notify or attribute to the named person unless that email matches a real GitHub account.
-- Backdated commits show on the contribution graph in the date bucket of `GIT_AUTHOR_DATE`. GitHub renders the graph from authored-on dates, not pushed-on.
-- The script uses a `ThreadPoolExecutor` (10 workers) to prepare backdated commit metadata in parallel, then runs `git commit` serially per repo to avoid index races.
+The live smoke test creates a public repo named `gca-smoke-<timestamp>` on your account, runs commits / PRs / discussions / quickdraw against it, then deletes it. If anything fails, the repo URL is printed and the repo is left for forensics.
+
+## Security notes
+
+- All subprocess calls use list form. No `shell=True`. No string interpolation into commands.
+- Repo names are validated against a strict regex (no path separators, no `..`).
+- Clone URLs embed the token inline (`https://x-access-token:TOKEN@github.com/...`) but the temp directory is wiped on every exit, success or failure.
+- GraphQL discussions use `Authorization: Bearer ...` consistently; REST and GraphQL both go through the same authenticated session.
+
+## Limitations and ToS
+
+GitHub's terms of service prohibit creating fake activity to mislead other users about your work history. This tool is most useful for:
+
+- Filling your contribution graph for repos that you legitimately worked on offline.
+- Practicing CI / git workflows on throwaway repos.
+- Earning the achievements that GitHub still awards for activity (Pull Shark, Quickdraw, YOLO).
+
+It does not, and cannot, help with badges GitHub has frozen (Pair Extraordinaire) or that require real third-party action (Starstruck, Galaxy Brain post-2024 upvote requirement).
+
+Use responsibly.
 
 ## License
 
-[MIT](LICENSE) © [@sam-siavoshian](https://github.com/sam-siavoshian).
+[MIT](LICENSE) (c) [@sam-siavoshian](https://github.com/sam-siavoshian).
