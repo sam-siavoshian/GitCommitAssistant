@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gca"
+version = "2.0.0"
+description = "Honest GitHub activity automation. CLI for backdated commits, real PRs, discussions, coauthored PRs, quickdraw."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Sam Siavoshian" }]
+keywords = ["github", "git", "automation", "achievements", "cli"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+dependencies = [
+    "typer>=0.12,<1.0",
+    "rich>=13.7",
+    "requests>=2.32",
+    "keyring>=24.3",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.14",
+    "responses>=0.25",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+gca = "gca.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/sam-siavoshian/GitCommitAssistant"
+Issues = "https://github.com/sam-siavoshian/GitCommitAssistant/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gca"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: hits real GitHub (set GCA_LIVE=1 and provide GCA_GITHUB_TOKEN)",
+]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501", "B008"]  # B008: typer.Option/Argument in defaults is the canonical Typer pattern
